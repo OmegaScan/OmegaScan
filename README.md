@@ -1,5 +1,5 @@
 ## build
-To set up your build directory:
+To set up your build directory: 
 
 	$ mkdir -p <path/to/omegascan>/build
 	$ cd <path/to/omegascan>/build
