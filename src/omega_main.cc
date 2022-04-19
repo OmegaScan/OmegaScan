@@ -9,11 +9,11 @@ std::string raw_port_specified;
 unsigned int raw_options = 0;
 
 void omega_main() {
-	std::cout << std::endl;
-	std::cout << "omega_main:" << std::endl;
-	std::cout << "\ttarget_host: " << raw_target_host << std::endl;
-	std::cout << "\tport_specified: " << raw_port_specified << std::endl;
-	std::cout << "\toptions: " << raw_options << std::endl;
-	std::cout << std::endl;
-	return;
+    std::cout << std::endl;
+    std::cout << "omega_main:" << std::endl;
+    std::cout << "\ttarget_host: " << raw_target_host << std::endl;
+    std::cout << "\tport_specified: " << raw_port_specified << std::endl;
+    std::cout << "\toptions: " << raw_options << std::endl;
+    std::cout << std::endl;
+    return;
 }
