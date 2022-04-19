@@ -18,9 +18,9 @@ void print_usage()
 	std::cout << "-sU: UDP Scan" << std::endl;
 }
 
-std::string target_host;
-std::string port_specified;
-unsigned int options = 0;
+extern std::string raw_target_host;
+extern std::string raw_port_specified;
+extern unsigned int raw_options;
 
 int main(int argc, char* argv[])
 {
@@ -41,23 +41,22 @@ int main(int argc, char* argv[])
 		int c = getopt_long(argc, argv, "vhp:T:", longOpts, &optIndex);
 		// std::cout << "c: " << c << std::endl;
 		if (c == -1) {
-			std::cout << "options: " << options << std::endl;
 			break;
 		}
 
 		switch (c) {
 			case 0: {
-				options += opt;
+				raw_options += opt;
 				break;
 			}
 			case 'p': {
 				// std::cout << "Prot Specified: " << optarg << std::endl;
-				port_specified = optarg;
+				raw_port_specified = optarg;
 				break;
 			}
 			case 'T': {
 				// std::cout << "Target Specified: " << optarg << std::endl;
-				target_host = optarg;
+				raw_target_host = optarg;
 				break;
 			}
 			case 'v': {
