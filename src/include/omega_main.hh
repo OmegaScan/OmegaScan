@@ -1,8 +1,13 @@
-#include <string>
-
 #ifndef OMEGA_MAIN
 #define OMEGA_MAIN
 
-void omega_main();
+#include <string>
+#include <iostream>
+#include <sys/socket.h>
+
+#include "basic.hh"
+#include "tcp_syn.hh"
+
+void omega_main(std::string raw_target_host, std::string raw_port_specified, int raw_options);
 
 #endif

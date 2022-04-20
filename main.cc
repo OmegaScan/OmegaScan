@@ -17,11 +17,12 @@ void print_usage() {
     std::cout << "-sU: UDP Scan" << std::endl;
 }
 
-extern std::string raw_target_host;
-extern std::string raw_port_specified;
-extern unsigned int raw_options;
-
 int main(int argc, char* argv[]) {
+
+    std::string raw_target_host;
+    std::string raw_port_specified;
+    unsigned int raw_options;
+
     while (true) {
         int optIndex = 0;
         int opt = 0;
@@ -73,6 +74,6 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    omega_main();
+    omega_main(raw_target_host, raw_port_specified, raw_options);
     return 0;
 }
