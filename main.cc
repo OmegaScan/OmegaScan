@@ -21,24 +21,23 @@ int main(int argc, char* argv[]) {
 
     std::string raw_target_host;
     std::string raw_port_specified;
-    unsigned int raw_options;
+    unsigned int raw_options = 0;
 
     while (true) {
-        int optIndex = 0;
+        int opt_index = 0;
         int opt = 0;
-        static struct option longOpts[] = {
-            { "sS", no_argument, &opt, 2 },
-            { "sT", no_argument, &opt, 4 },
-            { "sA", no_argument, &opt, 8 },
-            { "sU", no_argument, &opt, 1 },
+        static struct option long_opts[] = {
+            { "sS", no_argument, &opt, scan_type::TCP_SYN_SCAN },
+            { "sT", no_argument, &opt, scan_type::TCP_CNN_SCAN },
+            { "sA", no_argument, &opt, scan_type::TCP_ACK_SCAN },
+            { "sU", no_argument, &opt, scan_type::UDP_SCAN },
             { "target", required_argument, NULL, 'T' },
             { "version", no_argument, NULL, 'v' },
             { "help", no_argument, NULL, 'h' },
             { 0, 0, 0, 0 }
         };
 
-        int c = getopt_long(argc, argv, "vhp:T:", longOpts, &optIndex);
-        // std::cout << "c: " << c << std::endl;
+        int c = getopt_long(argc, argv, "vhp:T:", long_opts, &opt_index);
         if (c == -1) {
             break;
         }
@@ -49,12 +48,10 @@ int main(int argc, char* argv[]) {
             break;
         }
         case 'p': {
-            // std::cout << "Prot Specified: " << optarg << std::endl;
             raw_port_specified = optarg;
             break;
         }
         case 'T': {
-            // std::cout << "Target Specified: " << optarg << std::endl;
             raw_target_host = optarg;
             break;
         }
