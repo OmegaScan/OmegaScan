@@ -182,24 +182,3 @@ char* pinger::get_addr() {
 double pinger::get_sending_ts() {
     return icmp_request.sending_ts;
 }
-
-#include <stdio.h>
-void pinger_exampale() {
-
-    pinger p("8.8.8.8");
-
-    int ret = p.ping_for_success(1, 5);
-
-    if (ret == 0) {
-        printf("%s seq=%d %5.2fms\n",
-               p.get_addr(),
-               p.get_seq(),
-               (get_timestamp() - p.get_sending_ts()) * 1000
-              );
-    }
-
-}
-
-int main() {
-    pinger_exampale();
-}
