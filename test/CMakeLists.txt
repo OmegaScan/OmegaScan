@@ -5,3 +5,5 @@ macro (add_test_exec exec_name)
 endmacro (add_test_exec)
 
 add_test_exec(test)
+add_test_exec(getip_test)
+add_test_exec(syntest)
