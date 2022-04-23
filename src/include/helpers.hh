@@ -8,11 +8,11 @@
 #include <sys/socket.h>
 
 struct psdhdr {
-    unsigned long saddr; // 源地址
-    unsigned long daddr; // 目的地址
-    char mbz;            // 强制置空
-    char ptcl;           // 协议类型
-    unsigned short tcpl; // TCP长度
+    uint32_t saddr; // 源地址
+    uint32_t daddr; // 目的地址
+    uint8_t mbz;    // 强制置空
+    uint8_t ptcl;   // 协议类型
+    uint16_t tcpl;  // TCP长度
 };
 
 void perror_exit(const char* s);
@@ -28,5 +28,7 @@ void set_tcp_hdr(struct tcphdr* tcp_header, unsigned short dst_port, unsigned sh
 uint16_t checksum(const void* data, const int length);
 
 uint16_t tcp_checksum(struct iphdr* ip_header, struct tcphdr* tcp_header);
+
+void print_hdr_msg(char* buffer);
 
 #endif

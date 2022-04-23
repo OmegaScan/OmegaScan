@@ -13,7 +13,7 @@
 #include "basic.hh"
 
 void perror_exit(const char* s) {
-    fprintf(stderr, "%s: %s\n", s, strerror(errno));
+    std::cerr << std::string(s) << ": " << strerror(errno) << std::endl;
     exit(EXIT_FAILURE);
 }
 
@@ -24,7 +24,7 @@ int get_sockaddr(std::string host, unsigned short port, struct sockaddr_in* addr
     addr_p->sin_family = AF_INET;
     addr_p->sin_port = htons(port);
     if (inet_aton(host.c_str(), &(addr_p->sin_addr)) == 0) {
-        return error_type::TARGET_RRASE_FAILED;
+        return error_type::TARGET_PRASE_FAILED;
     };
     return 0;
 }
@@ -69,8 +69,8 @@ void set_ip_hdr(struct iphdr* ip_header, std::string target_addr) {
 }
 
 void set_tcp_hdr(struct tcphdr* tcp_header, unsigned short dst_port, unsigned short src_port, int flags) {
-    tcp_header->th_dport = htons(dst_port);
     tcp_header->th_sport = htons(src_port);
+    tcp_header->th_dport = htons(dst_port);
     tcp_header->th_seq = htons(0);
     tcp_header->th_ack = htons(0);
     tcp_header->th_x2 = 0;
@@ -134,4 +134,29 @@ uint16_t tcp_checksum(struct iphdr *ip_header, struct tcphdr *tcp_header) {
     memcpy(pseudogram + sizeof(struct psdhdr), tcp_header, sizeof(struct tcphdr));
 
     return htons(checksum(pseudogram, pseudogram_size));
+}
+
+void print_hdr_msg(char* buffer) {
+    struct iphdr *recv_iph = (struct iphdr*)buffer;
+    struct tcphdr *recv_tcph = (struct tcphdr*)(buffer + 4 * (recv_iph->ihl));
+
+    std::cout << "recv source port: " << ntohs(recv_tcph->th_sport) << std::endl;
+    std::cout << "recv dest port: " << ntohs(recv_tcph->th_dport) << std::endl;
+
+    char ipName[20];
+    unsigned long k = ntohl(recv_iph->saddr);
+    unsigned char p1 = (u_char)((k >> 24) & 0xFF);
+    unsigned char p2 = (u_char)((k >> 16) & 0xFF);
+    unsigned char p3 = (u_char)((k >> 8) & 0xFF);
+    unsigned char p4 = (u_char)(k & 0xFF);
+    sprintf(ipName, "%d.%d.%d.%d", p1, p2, p3, p4);
+    std::cout << "recv source ip: " << ipName << std::endl;
+
+    k = ntohl(recv_iph->daddr);
+    p1 = (u_char)((k >> 24) & 0xFF);
+    p2 = (u_char)((k >> 16) & 0xFF);
+    p3 = (u_char)((k >> 8) & 0xFF);
+    p4 = (u_char)(k & 0xFF);
+    sprintf(ipName, "%d.%d.%d.%d", p1, p2, p3, p4);
+    std::cout << "recv dest ip: " << ipName << std::endl;
 }

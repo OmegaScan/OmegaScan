@@ -1,7 +1,7 @@
 #ifndef BASIC_CONFIG
 #define BASIC_CONFIG
 
-#define LOCAL_PORT 65535
+#define LOCAL_PORT 30000
 #define TCP_SEQ_NUM 0x1234
 #define TCP_WIN_SIZE 0x4000
 #define CUSTOM_IP_ID 0x1000
@@ -16,7 +16,7 @@ enum scan_type {
 };
 
 enum error_type {
-    TARGET_RRASE_FAILED = 1,
+    TARGET_PRASE_FAILED = 1,
     PORT_OUT_OF_RANGE = 2,
     SOCKET_CREATE_ERROR = 3,
     SOCKET_SEND_ERROR = 4,
