@@ -23,6 +23,11 @@ int main(int argc, char* argv[]) {
     std::string raw_port_specified;
     unsigned int raw_options = 0;
 
+    if (argc == 1) {
+        print_usage();
+        return 0;
+    }
+
     while (true) {
         int opt_index = 0;
         int opt = 0;

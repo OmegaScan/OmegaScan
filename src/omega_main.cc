@@ -9,10 +9,10 @@ void omega_main(std::string raw_target_host, std::string raw_port_specified, uns
     std::cout << "\toptions: " << raw_options << std::endl;
     std::cout << std::endl;
 
-    // std::vector<std::string> vs = parse_host("127.0.0.1-127.0.1.3");
-    // for(std::string s : vs) {
-    //     std::cout << s << std::endl;
-    // }
+    std::vector<std::string> vs = parse_host("127.0.0.1");
+    for(std::string s : vs) {
+        std::cout << s << std::endl;
+    }
 
     tcp_syn(raw_target_host, 80);
 
@@ -28,7 +28,12 @@ std::vector<std::string> parse_host(const std::string &raw_target_host) {
 
     std::stringstream host_range_str(raw_target_host);
     while (++cycle_num < 3 && std::getline(host_range_str, input_buffer, delimiter)) {
-        bool is_valid = check(input_buffer, uint32_host);
+        char *ch_host = (char *) input_buffer.data();
+        bool is_valid = false;
+        if (inet_addr(ch_host) != INADDR_NONE) {
+            uint32_host = ntohl(inet_addr(ch_host));
+            is_valid = true;
+        }
         if (is_valid && cycle_num == 1)
             start_host = uint32_host;
         else if (is_valid && cycle_num == 2) {
@@ -66,26 +71,4 @@ std::vector<std::string> parse_host(const std::string &raw_target_host) {
         }
     }
     return host_list;
-}
-
-bool check(const std::string &str_host, uint32_t &uint32_host) {
-    const char dot = '.';
-    bool is_valid = false;
-    std::string buffer;
-    std::stringstream host_str(str_host);
-    std::vector<std::string> vec_temp;
-    uint32_host = 0;
-    while (std::getline(host_str, buffer, dot))
-        vec_temp.push_back(buffer);
-
-    for (int i = 0; vec_temp.size() == 4 && i < vec_temp.size(); ++i) {
-        uint32_t u = stoi(vec_temp[i]);
-        if (255 < u) {
-            is_valid = false;
-        } else {
-            uint32_host += u << (8 * (3 - i));
-            is_valid = true;
-        }
-    }
-    return is_valid;
 }
