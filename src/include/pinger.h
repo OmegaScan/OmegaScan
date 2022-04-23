@@ -46,9 +46,9 @@ public:
     ~pinger();
 
     /**
-     * @brief 在指定时间内一直ping，直到ping成功
+     * @brief 在指定时间内一直ping，收到正确响应或超时
      *
-     * @param send_gap_time 两次ping之间的时间间隔
+     * @param send_gap_time 每两次ping之间的时间间隔
      * @param timeout 超时时间（即函数函数最长运行时间）
      * @return 0表示ping成功，-1表示失败
      */
@@ -66,21 +66,23 @@ public:
      * @brief 获取最后一次ping中ICMP报文的序列号
      *
      */
-    int get_seq();
+    int get_seq() const;
 
     /**
      * @brief ping的目标地址
      *
      */
-    char* get_addr();
+    char* get_addr() const;
 
     /**
      * @brief 获取最后一次ping中ICMP报文的发送时间
      *
      */
-    double get_sending_ts();
+    double get_sending_ts() const;
 
     static uint16_t calculate_checksum(unsigned char* buffer, int bytes);
+
+    static double get_timestamp();
 
 private:
 
