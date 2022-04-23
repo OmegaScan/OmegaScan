@@ -50,7 +50,7 @@ pinger::~pinger() {
     close(sockfd);
 }
 
-double get_timestamp() {
+double pinger::get_timestamp() {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return tv.tv_sec + ((double)tv.tv_usec) / 1000000;
@@ -171,14 +171,14 @@ int pinger::ping(double timeout) {
     }
 }
 
-int pinger::get_seq() {
+int pinger::get_seq() const {
     return ntohs(icmp_reply.seq);
 }
 
-char* pinger::get_addr() {
+char* pinger::get_addr() const {
     return inet_ntoa(addr.sin_addr);
 }
 
-double pinger::get_sending_ts() {
+double pinger::get_sending_ts() const {
     return icmp_request.sending_ts;
 }
