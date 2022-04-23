@@ -4,6 +4,6 @@
 
 int main(int argc, char *argv[])
 {
-    std::cout << tcp_syn("39.104.55.143", 8888) << std::endl;
+    std::cout << tcp_syn("39.104.55.143", 21) << std::endl;
     return 0;
 }

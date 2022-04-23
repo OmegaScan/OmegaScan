@@ -27,7 +27,7 @@ int tcp_syn(std::string host, unsigned short port) {
     if (ret != 0)
         return ret;
 
-    ret = get_sockaddr(get_local_ip(), port++, &local_addr);
+    ret = get_sockaddr(get_local_ip(), port, &local_addr);
     if (ret != 0)
         return ret;
 
@@ -60,15 +60,31 @@ int tcp_syn(std::string host, unsigned short port) {
     ip_header.check = checksum(&ip_header, sizeof(iphdr));
     tcp_header.check = tcp_checksum(&ip_header, &tcp_header);
 
-    char buf[MAX_PACKET_LENTH] = {0};
-    memcpy(buf, &ip_header, sizeof(iphdr));
-    memcpy(buf + sizeof(iphdr), &tcp_header, sizeof(tcphdr));
+    char send_buf[MAX_PACKET_LENTH] = {0};
+    memcpy(send_buf, &ip_header, sizeof(iphdr));
+    memcpy(send_buf + sizeof(iphdr), &tcp_header, sizeof(tcphdr));
 
-    int send_ret = sendto(sock_fd, buf, ip_header.tot_len, 0, (struct sockaddr*)&target_addr, sizeof(target_addr));
+    int send_ret = sendto(sock_fd, send_buf, ip_header.tot_len, 0, (struct sockaddr*)&target_addr, sizeof(target_addr));
     if (send_ret <= 0)
-        return error_type::SOCKET_SENDTO_ERROR;
+        return error_type::SOCKET_SEND_ERROR;
 
-    usleep(1000);
+    /* Begin to receive package */
+    struct timeval timeout = { 10, 0 };
+    if (setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(struct timeval)) < 0) {
+        perror_exit("[#] Unable to set SO_RCVTIMEO socket option\n");
+    } else {
+        printf("[*] Succesfully set SO_RCVTIMEO option\n");
+    }
+
+    // Holds the destination network information
+    struct sockaddr_storage from_addr;
+    socklen_t from_len = 0;
+    char recv_buf[MAX_PACKET_LENTH] = {0};
+    int recv_ret = recvfrom(sock_fd, recv_buf, MAX_PACKET_LENTH, 0, (struct sockaddr*)&from_addr, &from_len);
+    if (recv_ret <= 0)
+        return error_type::SOCKET_RECV_ERROR;
+
+    std::cout << "recv: " << (recv_buf) << std::endl;
 
     /* Begin to receive package */
 

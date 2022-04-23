@@ -19,7 +19,8 @@ enum error_type {
     TARGET_RRASE_FAILED = 1,
     PORT_OUT_OF_RANGE = 2,
     SOCKET_CREATE_ERROR = 3,
-    SOCKET_SENDTO_ERROR = 4,
+    SOCKET_SEND_ERROR = 4,
+    SOCKET_RECV_ERROR = 5,
 };
 
 #endif

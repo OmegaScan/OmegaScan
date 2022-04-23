@@ -20,11 +20,10 @@ void perror_exit(const char* s) {
 int get_sockaddr(std::string host, unsigned short port, struct sockaddr_in* addr_p) {
     if (port < 1 || port > 65535)
         return error_type::PORT_OUT_OF_RANGE;
-    struct sockaddr_in addr = *addr_p;
-    bzero(&addr, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(port);
-    if (inet_aton(host.c_str(), &(addr.sin_addr)) == 0) {
+    bzero(addr_p, sizeof(sockaddr_in));
+    addr_p->sin_family = AF_INET;
+    addr_p->sin_port = htons(port);
+    if (inet_aton(host.c_str(), &(addr_p->sin_addr)) == 0) {
         return error_type::TARGET_RRASE_FAILED;
     };
     return 0;
@@ -72,12 +71,12 @@ void set_ip_hdr(struct iphdr* ip_header, std::string target_addr) {
 void set_tcp_hdr(struct tcphdr* tcp_header, unsigned short dst_port, unsigned short src_port, int flags) {
     tcp_header->th_dport = htons(dst_port);
     tcp_header->th_sport = htons(src_port);
-    tcp_header->th_seq = htonl(TCP_SEQ_NUM);
-    tcp_header->th_ack = htonl(0);
+    tcp_header->th_seq = htons(0);
+    tcp_header->th_ack = htons(0);
     tcp_header->th_x2 = 0;
     tcp_header->th_off = 5;     /* Assuming the minimal header length */
     tcp_header->th_flags = (uint8_t)flags;
-    tcp_header->th_win = htonl(TCP_WIN_SIZE);
+    tcp_header->th_win = htons(TCP_WIN_SIZE);
     tcp_header->th_sum = 0;     /* Will compute after header is completly set */
     tcp_header->th_urp = 0;
 }
