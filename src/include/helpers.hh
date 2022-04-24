@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <iostream>
 #include <string>
+#include <vector>
 #include <strings.h>
 #include <sys/socket.h>
 
@@ -32,4 +33,9 @@ uint16_t tcp_checksum(struct iphdr* ip_header, struct tcphdr* tcp_header);
 void print_hdr_msg(char* buffer);
 
 unsigned int get_flag_of(char* buf, size_t size);
+
+// template<typename T>
+// std::vector<std::vector<T>>& vector_slice(std::vector<T>& vec, size_t fineness);
+
+std::vector<std::vector<int>>& vector_slice(std::vector<int>& vec, size_t fineness);
 #endif

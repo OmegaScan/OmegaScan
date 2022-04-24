@@ -1,4 +1,5 @@
 #include <arpa/inet.h>
+#include <cstdio>
 #include <cstring>
 #include <ifaddrs.h>
 #include <iostream>
@@ -8,6 +9,7 @@
 #include <netinet/tcp.h>
 #include <string>
 #include <sys/ioctl.h>
+#include <vector>
 
 #include "helpers.hh"
 #include "basic.hh"
@@ -166,4 +168,27 @@ unsigned int get_flag_of(char* buffer, size_t size) {
     struct iphdr *ip_ptr = (struct iphdr*)buffer;
     struct tcphdr* tcp_ptr = (struct tcphdr*)(buffer + 4 * (ip_ptr->ihl));
     return tcp_ptr->th_flags;
+}
+
+
+// template<typename T>
+// std::vector<std::vector<T>>& vector_slice(std::vector<T>& vec, size_t fineness) {
+std::vector<std::vector<int>>& vector_slice(std::vector<int>& vec, size_t fineness) {
+    size_t pieces = vec.size() / fineness + (vec.size() % fineness != 0);
+    // std::vector<std::vector<int>> result;
+    auto result = new std::vector<std::vector<int>>;
+    auto vec_iter = vec.begin();
+    int offset_begin;
+    int offset_end;
+
+    for (int i = 0; i < pieces; i++) {
+        offset_begin = i * fineness;
+        offset_end = offset_begin + fineness;
+        offset_end = offset_end < vec.size() ? offset_end : vec.size();
+        std::vector<int> temp;
+        temp.insert(temp.begin(), vec_iter + offset_begin, vec_iter + offset_end);
+        result->push_back(temp);
+    }
+
+    return *result;
 }
