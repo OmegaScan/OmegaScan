@@ -1,6 +1,6 @@
 #include "omega_main.hh"
-#include "tcp_syn.hh"
 #include "parser.hh"
+#include "scan.h"
 
 void omega_main(std::string raw_target_host, std::string raw_port_specified, unsigned int raw_options) {
     std::cout << std::endl;
@@ -10,11 +10,28 @@ void omega_main(std::string raw_target_host, std::string raw_port_specified, uns
     std::cout << "\toptions: " << raw_options << std::endl;
     std::cout << std::endl;
 
-    // tcp_syn(raw_target_host, 80);
+    std::vector<std::string> ips = parse_host(raw_target_host);
+    std::vector<uint16_t> ports = parse_port(raw_port_specified);
 
-    std::vector<std::string> vs = parse_host("127.0.0.1");
-    for(std::string s : vs) {
-        std::cout << s << std::endl;
+    switch (raw_options) {
+    case scan_type::UDP_SCAN:
+        udp_scan(ips, ports);
+        break;
+    case scan_type::TCP_SYN_SCAN:
+        tcp_syn_scan(ips, ports);
+        break;
+    case scan_type::TCP_CNN_SCAN:
+        tcp_cnn_scan(ips, ports);
+        break;
+    case scan_type::TCP_ACK_SCAN:
+        tcp_ack_scan(ips, ports);
+        break;
+    case scan_type::PING_SWEEP:
+        ping_sweep(ips);
+        break;
+    default:
+        std::cerr << "扫描类型参数错误" << std::endl;
+        break;
     }
 
     return;

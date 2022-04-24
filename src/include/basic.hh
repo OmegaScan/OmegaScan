@@ -1,7 +1,7 @@
 #ifndef BASIC_CONFIG
 #define BASIC_CONFIG
 
-#define debug_switch 1
+#define debug_switch 0
 #define debug(statement) if(debug_switch) statement;
 
 #define LOCAL_PORT 30000
@@ -16,6 +16,7 @@ enum scan_type {
     TCP_SYN_SCAN = 1 << 1,
     TCP_CNN_SCAN = 1 << 2,
     TCP_ACK_SCAN = 1 << 3,
+    PING_SWEEP = 1 << 4,
 };
 
 enum error_type {
