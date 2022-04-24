@@ -31,4 +31,5 @@ uint16_t tcp_checksum(struct iphdr* ip_header, struct tcphdr* tcp_header);
 
 void print_hdr_msg(char* buffer);
 
+unsigned int get_flag_of(char* buf, size_t size);
 #endif

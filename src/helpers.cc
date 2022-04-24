@@ -160,3 +160,10 @@ void print_hdr_msg(char* buffer) {
     sprintf(ipName, "%d.%d.%d.%d", p1, p2, p3, p4);
     std::cout << "recv dest ip: " << ipName << std::endl;
 }
+
+
+unsigned int get_flag_of(char* buffer, size_t size) {
+    struct iphdr *ip_ptr = (struct iphdr*)buffer;
+    struct tcphdr* tcp_ptr = (struct tcphdr*)(buffer + 4 * (ip_ptr->ihl));
+    return tcp_ptr->th_flags;
+}
