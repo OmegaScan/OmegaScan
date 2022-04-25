@@ -36,6 +36,7 @@ int main(int argc, char* argv[]) {
             { "sT", no_argument, &opt, scan_type::TCP_CNN_SCAN },
             { "sA", no_argument, &opt, scan_type::TCP_ACK_SCAN },
             { "sU", no_argument, &opt, scan_type::UDP_SCAN },
+            { "sP", no_argument, &opt, scan_type::PING_SWEEP },
             { "target", required_argument, NULL, 'T' },
             { "version", no_argument, NULL, 'v' },
             { "help", no_argument, NULL, 'h' },

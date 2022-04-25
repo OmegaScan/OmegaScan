@@ -173,10 +173,10 @@ unsigned int get_flag_of(char* buffer, size_t size) {
 
 // template<typename T>
 // std::vector<std::vector<T>>& vector_slice(std::vector<T>& vec, size_t fineness) {
-std::vector<std::vector<int>>& vector_slice(std::vector<int>& vec, size_t fineness) {
+std::vector<std::vector<uint16_t>>& vector_slice(std::vector<uint16_t>& vec, size_t fineness) {
     size_t pieces = vec.size() / fineness + (vec.size() % fineness != 0);
-    // std::vector<std::vector<int>> result;
-    auto result = new std::vector<std::vector<int>>;
+    // std::vector<std::vector<uint16_t>> result;
+    auto result = new std::vector<std::vector<uint16_t>>;
     auto vec_iter = vec.begin();
     int offset_begin;
     int offset_end;
@@ -185,7 +185,7 @@ std::vector<std::vector<int>>& vector_slice(std::vector<int>& vec, size_t finene
         offset_begin = i * fineness;
         offset_end = offset_begin + fineness;
         offset_end = offset_end < vec.size() ? offset_end : vec.size();
-        std::vector<int> temp;
+        std::vector<uint16_t> temp;
         temp.insert(temp.begin(), vec_iter + offset_begin, vec_iter + offset_end);
         result->push_back(temp);
     }

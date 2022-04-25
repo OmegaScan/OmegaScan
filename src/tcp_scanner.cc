@@ -97,7 +97,7 @@ std::vector<int> tcpScanner::getSuccessSocksIndex() {
     return result;
 }
 
-void tcpScanner::scan(u_long addr, const std::vector<int>& ports) {
+void tcpScanner::scan(uint32_t addr, const std::vector<uint16_t>& ports) {
     this->addr = addr;
     this->ports = ports;
 
@@ -128,6 +128,6 @@ void tcpScanner::scan(u_long addr, const std::vector<int>& ports) {
     }
 }
 
-void tcpScanner::setSuccessCallback(void (*f)(u_long, int, int)) {
+void tcpScanner::setSuccessCallback(void (*f)(uint32_t, uint16_t, int)) {
     this->successCallback = f;
 }
