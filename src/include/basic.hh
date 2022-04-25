@@ -1,7 +1,7 @@
 #ifndef BASIC_CONFIG
 #define BASIC_CONFIG
 
-#define debug_switch 1
+#define debug_switch 0
 #define debug(statement) if(debug_switch) statement;
 
 #define LOCAL_PORT 30000
@@ -10,6 +10,7 @@
 #define CUSTOM_IP_ID 0x1000
 #define CUSTOM_IP_TTL 64
 #define MAX_PACKET_LENTH 8192
+#define RETRY_TIMES 5
 
 enum scan_type {
     UDP_SCAN = 1,

@@ -62,7 +62,7 @@ int tcp_ack(std::string host, unsigned short port) {
 
     /* Begin to receive package */
     // Set receive timeout
-    struct timeval timeout = { 1, 0 };
+    struct timeval timeout = { 5, 0 };
     if (setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(struct timeval)) < 0) {
         perror_exit("[#] Unable to set SO_RCVTIMEO socket option\n");
     }
@@ -70,16 +70,24 @@ int tcp_ack(std::string host, unsigned short port) {
     // Holds the destination network information
     struct sockaddr_storage from_addr;
     socklen_t from_len = 0;
-    char BUF_rec[MAX_PACKET_LENTH] = {0};
-    int recv_ret = recvfrom(sock_fd, BUF_rec, MAX_PACKET_LENTH, 0, (struct sockaddr*)&from_addr, &from_len);
+    char recv_buf[MAX_PACKET_LENTH];
+    int recv_ret;
+    struct iphdr *recv_iph;
+    struct tcphdr *recv_tcph;
+    unsigned retry = 0;
+    do {
+        memset(recv_buf, 0, MAX_PACKET_LENTH);
+        recv_ret= recvfrom(sock_fd, recv_buf, MAX_PACKET_LENTH, 0, (struct sockaddr*)&from_addr, &from_len);
+        recv_iph = (struct iphdr*)recv_buf;
+        recv_tcph = (struct tcphdr*)(recv_buf + 4 * (recv_iph->ihl));
+    } while (retry++ < RETRY_TIMES && recv_ret != 1 && (ntohs(recv_tcph->th_sport) != ntohs(tcp_header.th_dport) || ntohl(recv_iph->saddr) != ntohl(ip_header.daddr)));
     // For resource saving
     close(sock_fd);
-    if (recv_ret <= 0)
+    if (recv_ret <= 0 || retry > RETRY_TIMES)
         return error_type::SOCKET_RECV_ERROR;
 
-    debug(print_hdr_msg(BUF_rec))
+    debug(print_hdr_msg(recv_buf))
 
-    int rst = (get_flag_of(BUF_rec, sizeof(iphdr) + sizeof(tcphdr)) >> 2) % 2;
+    int rst = (get_flag_of(recv_buf, sizeof(iphdr) + sizeof(tcphdr)) >> 2) % 2;
     return rst;
-    return 0;
 }
