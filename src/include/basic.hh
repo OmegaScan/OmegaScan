@@ -1,7 +1,7 @@
 #ifndef BASIC_CONFIG
 #define BASIC_CONFIG
 
-#define debug_switch 0
+#define debug_switch 1
 #define debug(statement) if(debug_switch) statement;
 
 #define LOCAL_PORT 30000
@@ -26,6 +26,8 @@ enum error_type {
     SOCKET_SEND_ERROR = -4,
     SOCKET_RECV_ERROR = -5,
     UNKNOWN_RESULT = -6,
+    SOCK_BIND_ERROR = -7,
+    SOCK_CONN_ERROR = -8
 };
 
 enum syn_res {

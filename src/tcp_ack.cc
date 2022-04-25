@@ -11,7 +11,7 @@
 
 static unsigned short local_port = LOCAL_PORT;
 
-int tcp_syn(std::string host, unsigned short port) {
+int tcp_ack(std::string host, unsigned short port) {
     /* Set up raw socket */
     int sock_fd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
     if (sock_fd == -1)

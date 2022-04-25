@@ -48,6 +48,14 @@ int tcp_syn(std::string host, unsigned short port) {
     if (ret != 0)
         return ret;
 
+    int bind_ret = bind(sock_fd, (struct sockaddr*)&local_addr, sizeof(local_addr));
+    if (bind_ret < 0)
+        return error_type::SOCK_BIND_ERROR;
+
+    int conn_ret = connect(sock_fd, (struct sockaddr*)&target_addr, sizeof(target_addr));
+    if (conn_ret < 0)
+        return error_type::SOCK_CONN_ERROR;
+
     /* Begin to send package */
     // Fill in checksum first
     ip_header.check = checksum(&ip_header, sizeof(iphdr));
