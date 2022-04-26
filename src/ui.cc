@@ -2,57 +2,15 @@
 #include <iostream>
 #include <vector>
 
-auto screen = Screen::Create(
-                  Dimension::Full(),
-                  Dimension::Fixed(20)
-              );
-
-std::string reset_position;
-
-ftxui::Element scanning_com = hbox({
-    text("scanning ip: null \tport: null"),
-});
-ftxui::Element process_com = hbox({
-    gaugeRight(0) | flex,
-    text(""),
-});
-ftxui::Elements messages;
-MyMenu message_com;
-
-MyMenu::MyMenu() {
-    my_menu = Renderer(base_menu, [&] {
-        int begin = 0;
-        int end = 0;
-        if (selected_line < 4) {
-            begin = 0;
-            end = std::min(8, (int)(lines.size() - 1));
-        } else if (selected_line + 4 >= lines.size()) {
-            begin = std::max((int)(lines.size() - 9), 0);
-            end = lines.size() - 1;
-        } else {
-            begin = selected_line - 4;
-            end = selected_line + 4;
-        }
-
-        Elements elements;
-        for(int i = begin; i <= end; ++i) {
-            Element element = text(lines[i]);
-            if (i == selected_line)
-                element = element | inverted;
-            elements.push_back(element);
-        }
-
-        if(end - begin < 8) {
-            int blank_count = 9 - (end - begin + 1);
-            for (int i = 0; i < blank_count; i++) {
-                elements.push_back(text(""));
-            }
-        }
-        return vbox(std::move(elements)) | vscroll_indicator | frame | border;
-    });
-}
-
 ui::ui() {
+    scanning_com = ftxui::hbox({
+        text("scanning ip: null \tport: null"),
+    });
+
+    process_com = ftxui::hbox({
+        gaugeRight(0) | flex,
+        text(""),
+    });
 }
 
 ui::~ui() {
