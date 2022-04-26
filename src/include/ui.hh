@@ -43,12 +43,49 @@ public:
     Element Render() {
         return my_menu->Render();
     }
-    MyMenu();
+    MyMenu() {
+        my_menu = Renderer(base_menu, [&] {
+            int begin = 0;
+            int end = 0;
+            if (selected_line < 4) {
+                begin = 0;
+                end = std::min(8, (int)(lines.size() - 1));
+            } else if (selected_line + 4 >= lines.size()) {
+                begin = std::max((int)(lines.size() - 9), 0);
+                end = lines.size() - 1;
+            } else {
+                begin = selected_line - 4;
+                end = selected_line + 4;
+            }
+
+            Elements elements;
+            for(int i = begin; i <= end; ++i) {
+                Element element = text(lines[i]);
+                if (i == selected_line)
+                    element = element | inverted;
+                elements.push_back(element);
+            }
+
+            if(end - begin < 8) {
+                int blank_count = 9 - (end - begin + 1);
+                for (int i = 0; i < blank_count; i++) {
+                    elements.push_back(text(""));
+                }
+            }
+            return vbox(std::move(elements)) | vscroll_indicator | frame | border;
+        });
+    }
     ~MyMenu() {}
 };
 
 class ui {
 private:
+    ftxui::Screen screen = Screen::Create(Dimension::Full(), Dimension::Fixed(20));
+    std::string reset_position;
+    ftxui::Element scanning_com;
+    ftxui::Element process_com;
+    ftxui::Elements messages;
+    MyMenu message_com;
 
 public:
     void update();
