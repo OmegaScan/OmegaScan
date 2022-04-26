@@ -37,5 +37,5 @@ unsigned int get_flag_of(char* buf, size_t size);
 // template<typename T>
 // std::vector<std::vector<T>>& vector_slice(std::vector<T>& vec, size_t fineness);
 
-std::vector<std::vector<int>>& vector_slice(std::vector<int>& vec, size_t fineness);
+std::vector<std::vector<uint16_t>>& vector_slice(std::vector<uint16_t>& vec, size_t fineness);
 #endif

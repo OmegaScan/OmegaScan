@@ -7,6 +7,8 @@
 #include <string>
 #include <arpa/inet.h>
 
+#include "basic.hh"
+
 /**
  * @brief           Sacn port by SYN SCAN
  * @param host      Target host ipv4
@@ -18,6 +20,7 @@
  *      return > 0: Succeed Scan, more details can be found at basic.hh ->
  *                  syn_res
  **/
-int tcp_syn(std::string host, unsigned short port);
+int tcp_syn(std::string host, unsigned short port, unsigned short local_port = LOCAL_PORT);
+// int tcp_syn(std::string host, unsigned short port);
 
 #endif

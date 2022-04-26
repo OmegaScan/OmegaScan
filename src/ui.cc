@@ -1,5 +1,6 @@
 #include "ui.hh"
 #include <iostream>
+#include <vector>
 
 auto screen = Screen::Create(
                   Dimension::Full(),
@@ -78,6 +79,21 @@ void ui::showScanning(std::string ip, uint16_t port) {
     update();
 }
 
+void ui::showScanning(std::string ip, std::vector<uint16_t> ports) {
+    std::cout << std::endl;
+    std::cout << "scanning: " << "ip: " << ip << "\tport: ";
+    if (ports.size() <= 3) {
+        for(auto port : ports) {
+            std::cout << port << ",";
+        }
+    } else { /* 如果端口太多，就只显示几个 */
+        for (int i = 0; i < 3; i++) {
+            std::cout << ports[i] << ",";
+        }
+        std::cout << "..." << ports[ports.size() - 1] << std::endl;
+    }
+}
+
 void ui::showMessage(std::string message) {
     std::string str = fill(message, 100);
     message_com.addLine(str);
@@ -85,6 +101,7 @@ void ui::showMessage(std::string message) {
 
     messages.push_back(text(str));
 }
+
 
 void ui::showProcess(double process) {
     int percentage = (int)(process * 100);

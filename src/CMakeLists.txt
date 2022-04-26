@@ -1,4 +1,4 @@
-add_library(omegalib STATIC omega_main.cc tcp_syn.cc helpers.cc pinger.cc tcp_scanner.cc udp_scanner.cc parser.cc scan.cc ui.cc)
+add_library(omegalib STATIC omega_main.cc tcp_syn.cc helpers.cc pinger.cc tcp_ack.cc tcp_scanner.cc udp_scanner.cc parser.cc scan.cc ui.cc)
 
 # --- Fetch FTXUI --------------------------------------------------------------
 include(FetchContent)

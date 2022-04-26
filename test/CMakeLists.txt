@@ -12,3 +12,9 @@ add_test_exec(slice_test)
 add_test_exec(tcp_test)
 add_test_exec(udp_test)
 add_test_exec(parse_test)
+add_test_exec(threadtest)
+
+
+find_package(Threads)
+
+target_link_libraries(threadtest ${CMAKE_THREAD_LIBS_INIT})

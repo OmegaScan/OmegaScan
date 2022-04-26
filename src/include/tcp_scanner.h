@@ -8,8 +8,8 @@
 class tcpScanner {
 private:
 
-    std::vector<int> ports;
-    u_long addr;
+    std::vector<uint16_t> ports;
+    uint32_t addr;
 
     /**
      * @brief 传给select函数的fd集
@@ -34,7 +34,7 @@ private:
      * 传入的参数依次为ip，port，fd
      * 
      */
-    void (*successCallback)(u_long, int, int);
+    void (*successCallback)(uint32_t, uint16_t, int);
 
     /**
      * @brief 根据ip和ports创建若干个sockets
@@ -80,7 +80,7 @@ public:
      * 
      * @param f 回调函数的3个参数依次为ip,port,fd
      */
-    void setSuccessCallback(void (*f)(u_long, int, int));
+    void setSuccessCallback(void (*f)(uint32_t, uint16_t, int));
 
     /**
      * @brief 执行扫描
@@ -88,7 +88,7 @@ public:
      * @param addr ip地址（32位二进制值，host字节序）
      * @param ports 端口号集
      */
-    void scan(u_long addr, const std::vector<int>& ports);
+    void scan(uint32_t addr, const std::vector<u_int16_t>& ports);
 
     tcpScanner();
     ~tcpScanner();

@@ -3,7 +3,7 @@
 
 using namespace std;
 
-void handleSuccess(u_long ip, int port, int fd) {
+void handleSuccess(uint32_t ip, uint16_t port, int fd) {
 
     int p1 = (u_char)((ip >> 24) & 0xFF);
     int p2 = (u_char)((ip >> 16) & 0xFF);
@@ -17,7 +17,7 @@ void handleSuccess(u_long ip, int port, int fd) {
 
 int main(int argc, char const *argv[]) {
 
-    vector<int> ports = {
+    vector<uint16_t> ports = {
         80, 81, 88, 443, 8083, 8080, 8001, 8888, 3128, 3124, 3000, 1080
     };
 
