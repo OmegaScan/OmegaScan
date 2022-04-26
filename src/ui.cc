@@ -38,18 +38,21 @@ void ui::showScanning(std::string ip, uint16_t port) {
 }
 
 void ui::showScanning(std::string ip, std::vector<uint16_t> ports) {
-    std::cout << std::endl;
-    std::cout << "scanning: " << "ip: " << ip << "\tport: ";
+    std::stringstream message;
+
     if (ports.size() <= 3) {
         for(auto port : ports) {
-            std::cout << port << ",";
+            message << port << ",";
         }
-    } else { /* 如果端口太多，就只显示几个 */
-        for (int i = 0; i < 3; i++) {
-            std::cout << ports[i] << ",";
-        }
-        std::cout << "..." << ports[ports.size() - 1] << std::endl;
+    } else { /* 如果端口太多，就只显示部分 */
+        message << ports[0] << "," << ports[1] << "..." << ports[ports.size() - 1];
     }
+
+    scanning_com = hbox({
+        text(fill("ip:   " + ip, 20)) | bgcolor(0x9400D3_rgb) | borderRounded | flex,
+        text(fill("port:   " + message.str(), 28)) | bgcolor(0x9400D3_rgb) |  borderRounded | flex
+    });
+    update();
 }
 
 void ui::showMessage(std::string message) {

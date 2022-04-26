@@ -5,6 +5,40 @@ std::mt19937 mt(rd());
 std::uniform_int_distribution<int> dist(-1000, 1000);
 auto rnd = std::bind(dist, mt);
 ui my_ui; // 本来不想用全局变量的，但是由于C的回调函数...
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+long countP = 0;
+
+void print_tcp_syn(std::string host, unsigned short port, int total) {
+
+    int ret = tcp_syn(host, port, LOCAL_PORT);
+
+    pthread_mutex_lock(&mutex);
+    my_ui.showScanning(host, port);
+
+    // 生成扫描结果字符串
+    std::stringstream message;
+    switch (ret) {
+    case syn_res::RST:
+        message << "ip: " << host << ", "
+                << "port: " << port << " -> close";
+        break;
+    case syn_res::ACK:
+        message << "ip: " << host << ", "
+                << "port: " << port << " -> open";
+        break;
+    default:
+        message << "ip: " << host << ", "
+                << "port: " << port << " -> filtered";
+        break;
+    }
+    my_ui.showMessage(message.str());
+
+    countP++;
+
+    my_ui.showProcess((double)countP / (double)total);
+    pthread_mutex_unlock(&mutex);
+}
+
 
 void tcp_syn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
 
@@ -15,31 +49,8 @@ void tcp_syn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
 
     for (int i = 0; i < ips.size(); i++) {
         for (int j = 0; j < ports.size(); j++) {
-
-            my_ui.showScanning(ips[i], ports[j]);
-            // int ret = tcp_syn(ips[i], ports[j]);
-            auto future = pool.submit(tcp_syn, ips[i], ports[j], LOCAL_PORT);
-            int ret = future.get();
-
-            // 生成扫描结果字符串
-            std::stringstream message;
-            switch (ret) {
-            case syn_res::RST:
-                message << "ip: " << ips[i] << ", "
-                        << "port: " << ports[j] << " -> close";
-                break;
-            case syn_res::ACK:
-                message << "ip: " << ips[i] << ", "
-                        << "port: " << ports[j] << " -> open";
-                break;
-            default:
-                message << "ip: " << ips[i] << ", "
-                        << "port: " << ports[j] << " -> filtered";
-                break;
-            }
-            my_ui.showMessage(message.str());
-
-            my_ui.showProcess((double)++scanned_count / (double)(ips.size() * ports.size()));
+            double process_value = (double)++scanned_count / (double)(ips.size() * ports.size());
+            pool.submit(print_tcp_syn, ips[i], ports[j], ips.size() * ports.size());
         }
     }
     auto finish_status = pool.submit(finish_scan);
@@ -48,6 +59,7 @@ void tcp_syn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
 
     my_ui.showSuccesses();
 }
+
 
 void tcp_cnn_scan_success_handler(uint32_t ip, uint16_t port, int fd) {
 
@@ -86,7 +98,30 @@ void tcp_cnn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
             }
         }
     }
+    my_ui.showSuccesses();
 }
+
+void print_tcp_ack(std::string host, unsigned short port, int total) {
+
+    int ret = tcp_syn(host, port, LOCAL_PORT);
+
+    pthread_mutex_lock(&mutex);
+    my_ui.showScanning(host, port);
+    std::stringstream message;
+    if (ret > 0) {
+        message << "ip: " << host << ", "
+                << "port: " << port << " -> unfiltered";
+    } else {
+        message << "ip: " << host << ", "
+                << "port: " << port << " -> filtered";
+    }
+    my_ui.showMessage(message.str());
+    countP++;
+
+    my_ui.showProcess((double)countP / (double)total);
+    pthread_mutex_unlock(&mutex);
+}
+
 
 void tcp_ack_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
 
@@ -98,27 +133,14 @@ void tcp_ack_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
 
     for (int i = 0; i < ips.size(); i++) {
         for (int j = 0; j < ports.size(); j++) {
-
-            my_ui.showScanning(ips[i], ports[j]);
-
-            auto future = pool.submit(tcp_syn, ips[i], ports[j], LOCAL_PORT);
-            int ret = future.get();
-
-            std::stringstream message;
-            if (ret > 0) {
-                message << "ip: " << ips[i] << ", "
-                        << "port: " << ports[j] << " -> unfiltered";
-            } else {
-                message << "ip: " << ips[i] << ", "
-                        << "port: " << ports[j] << " -> filtered";
-            }
-            my_ui.showMessage(message.str());
-            my_ui.showProcess((double)++scanned_count / (double)(ips.size() * ports.size()));
+            // double process_value = (double)++scanned_count / (double)(ips.size() * ports.size());
+            pool.submit(print_tcp_ack, ips[i], ports[j],  ips.size() * ports.size());
         }
     }
     auto finish_status = pool.submit(finish_scan);
     finish_status.get();
     pool.shutdown();
+    my_ui.showSuccesses();
 }
 
 void udp_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
@@ -149,6 +171,7 @@ void udp_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
             my_ui.showProcess((double)++scanned_count / (double)(ips.size() * ports.size()));
         }
     }
+    my_ui.showSuccesses();
 }
 
 void ping_sweep(std::vector<std::string> ips) {
@@ -168,6 +191,7 @@ void ping_sweep(std::vector<std::string> ips) {
         my_ui.showMessage(message.str());
         my_ui.showProcess((double)(i + 1) / (double)ips.size());
     }
+    my_ui.showSuccesses();
 }
 
 void simulate_hard_computation() {
