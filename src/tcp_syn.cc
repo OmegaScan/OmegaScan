@@ -63,7 +63,7 @@ int tcp_syn(std::string host, unsigned short port, unsigned short local_port) {
 
     /* Begin to receive package */
     // Set receive timeout
-    struct timeval timeout = { 1, 0 };
+    struct timeval timeout = { RECV_TIMEOUT_SEC, 0 };
     if (setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(struct timeval)) < 0) {
         perror_exit("[#] Unable to set SO_RCVTIMEO socket option\n");
     }
@@ -78,7 +78,7 @@ int tcp_syn(std::string host, unsigned short port, unsigned short local_port) {
     unsigned retry = 0;
     do {
         memset(recv_buf, 0, MAX_PACKET_LENTH);
-        recv_ret= recvfrom(sock_fd, recv_buf, MAX_PACKET_LENTH, 0, (struct sockaddr*)&from_addr, &from_len);
+        recv_ret = recvfrom(sock_fd, recv_buf, MAX_PACKET_LENTH, 0, (struct sockaddr*)&from_addr, &from_len);
         recv_iph = (struct iphdr*)recv_buf;
         recv_tcph = (struct tcphdr*)(recv_buf + 4 * (recv_iph->ihl));
     } while (retry++ < RETRY_TIMES && recv_ret != 1 && (ntohs(recv_tcph->th_sport) != ntohs(tcp_header.th_dport) || ntohl(recv_iph->saddr) != ntohl(ip_header.daddr)));

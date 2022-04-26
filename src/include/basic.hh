@@ -11,6 +11,7 @@
 #define CUSTOM_IP_TTL 64
 #define MAX_PACKET_LENTH 8192
 #define RETRY_TIMES 2
+#define RECV_TIMEOUT_SEC 1
 
 enum scan_type {
     UDP_SCAN = 1,

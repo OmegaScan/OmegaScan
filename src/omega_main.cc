@@ -2,15 +2,15 @@
 #include "parser.hh"
 #include "scan.h"
 #include "ftxui.hh"
+#include "basic.hh"
 
 void omega_main(std::string raw_target_host, std::string raw_port_specified, unsigned int raw_options) {
-
-    std::cout << std::endl;
-    std::cout << "omega_main:" << std::endl;
-    std::cout << "\ttarget_host: " << raw_target_host << std::endl;
-    std::cout << "\tport_specified: " << raw_port_specified << std::endl;
-    std::cout << "\toptions: " << raw_options << std::endl;
-    std::cout << std::endl;
+    debug(std::cout << std::endl)
+    debug(std::cout << "omega_main:" << std::endl)
+    debug(std::cout << "\ttarget_host: " << raw_target_host << std::endl)
+    debug(std::cout << "\tport_specified: " << raw_port_specified << std::endl)
+    debug(std::cout << "\toptions: " << raw_options << std::endl)
+    debug(std::cout << std::endl)
 
     std::vector<std::string> ips = parse_host(raw_target_host);
     std::vector<uint16_t> ports = parse_port(raw_port_specified);
@@ -32,7 +32,7 @@ void omega_main(std::string raw_target_host, std::string raw_port_specified, uns
         ping_sweep(ips);
         break;
     default:
-        std::cerr << "扫描类型参数错误" << std::endl;
+        std::cerr << "scan type error, type --help for usage." << std::endl;
         break;
     }
 

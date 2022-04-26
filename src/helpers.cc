@@ -144,6 +144,7 @@ void print_hdr_msg(char* buffer) {
 
     std::cout << "recv source port: " << ntohs(recv_tcph->th_sport) << std::endl;
     std::cout << "recv dest port: " << ntohs(recv_tcph->th_dport) << std::endl;
+    std::cout << "flags: " << (unsigned int)(recv_tcph->th_flags) << std::endl;
 
     char ipName[20];
     unsigned long k = ntohl(recv_iph->saddr);

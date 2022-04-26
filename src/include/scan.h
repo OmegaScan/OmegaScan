@@ -14,7 +14,7 @@
 #include "helpers.hh"
 #include "tcp_syn.hh"
 #include "threader.hh"
-#define THREAD_NUMBER 20
+#define THREAD_NUMBER 100
 
 
 void tcp_syn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports);

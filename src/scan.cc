@@ -25,21 +25,16 @@ void tcp_syn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
             std::stringstream message;
             switch (ret) {
             case syn_res::RST:
-                message << "success! "
-                        << "ip: " << ips[i] << "\t"
-                        << "port: " << ports[j] << "\t"
-                        << "ret=RES";
+                message << "ip: " << ips[i] << ", "
+                        << "port: " << ports[j] << " -> close";
                 break;
             case syn_res::ACK:
-                message << "success! "
-                        << "ip: " << ips[i] << "\t"
-                        << "port: " << ports[j] << "\t"
-                        << "ret=ACK";
+                message << "ip: " << ips[i] << ", "
+                        << "port: " << ports[j] << " -> open";
                 break;
             default:
-                message << "fail! "
-                        << "ip: " << ips[i] << "\t"
-                        << "port: " << ports[j];
+                message << "ip: " << ips[i] << ", "
+                        << "port: " << ports[j] << " -> filtered";
                 break;
             }
             my_ui.showMessage(message.str());
@@ -50,6 +45,8 @@ void tcp_syn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
     auto finish_status = pool.submit(finish_scan);
     finish_status.get();
     pool.shutdown();
+
+    my_ui.showSuccesses();
 }
 
 void tcp_cnn_scan_success_handler(uint32_t ip, uint16_t port, int fd) {
@@ -60,9 +57,8 @@ void tcp_cnn_scan_success_handler(uint32_t ip, uint16_t port, int fd) {
     int p4 = (u_char)(ip & 0xFF);
 
     std::stringstream message;
-    message << "success! "
-            << "ip=" << p1 << "." << p2 << "." << p3 << "." << p4 << "\t"
-            << "port=" << port;
+    message << "ip: " << p1 << "." << p2 << "." << p3 << "." << p4 << ", "
+            << "port: " << port << " -> open";
     my_ui.showMessage(message.str());
 }
 
@@ -108,16 +104,13 @@ void tcp_ack_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
             auto future = pool.submit(tcp_syn, ips[i], ports[j], LOCAL_PORT);
             int ret = future.get();
 
-            // int ret = tcp_syn(ips[i], ports[j]);
             std::stringstream message;
-            if (ret >= 0) {
-                message << "success! "
-                        << "ip: " << ips[i] << "\t"
-                        << "port: " << ports[j];
+            if (ret > 0) {
+                message << "ip: " << ips[i] << ", "
+                        << "port: " << ports[j] << " -> unfiltered";
             } else {
-                message << "fail! "
-                        << "ip: " << ips[i] << "\t"
-                        << "port: " << ports[j];
+                message << "ip: " << ips[i] << ", "
+                        << "port: " << ports[j] << " -> filtered";
             }
             my_ui.showMessage(message.str());
             my_ui.showProcess((double)++scanned_count / (double)(ips.size() * ports.size()));
@@ -140,19 +133,16 @@ void udp_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
             std::stringstream message;
             switch (ret) {
             case -1:
-                message << "ip: " << ips[i] << "\t"
-                        << "port: " << ports[j] << "\t"
-                        << "is open/filtered";
+                message << "ip: " << ips[i] << ", "
+                        << "port: " << ports[j] << " -> open | filtered";
                 break;
             case 1:
-                message << "ip: " << ips[i] << "\t"
-                        << "port: " << ports[j] << "\t"
-                        << "is closed";
+                message << "ip: " << ips[i] << ", "
+                        << "port: " << ports[j] << " -> closed";
                 break;
             default:
-                message << "unknow error! "
-                        << "ip: " << ips[i] << "\t"
-                        << "port: " << ports[j];
+                message << "ip: " << ips[i] << ", "
+                        << "port: " << ports[j] << " -> unkown error";
                 break;
             }
             my_ui.showMessage(message.str());
@@ -168,8 +158,8 @@ void ping_sweep(std::vector<std::string> ips) {
         std::stringstream message;
         if(p.ping_for_success(0.3, 1) == 0) {
             message << "ping success! "
-                    << "ip: " << p.get_addr() << "\t"
-                    << "seq: " << p.get_seq() << "\t"
+                    << "ip: " << p.get_addr() << ", "
+                    << "seq: " << p.get_seq() << ", "
                     << "time: " << (pinger::get_timestamp() - p.get_sending_ts()) * 1000 << "ms";
         } else {
             message << "ping fail! "
