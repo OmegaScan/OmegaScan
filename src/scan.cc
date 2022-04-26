@@ -23,19 +23,17 @@ void tcp_syn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
             std::stringstream message;
             switch (ret) {
             case syn_res::RST:
-                message << "success! "
+                message << "s! "
                         << "ip: " << ips[i] << "\t"
-                        << "port: " << ports[j] << "\t"
-                        << "ret=RES";
+                        << "port: " << ports[j];
                 break;
             case syn_res::ACK:
-                message << "success! "
+                message << "s! "
                         << "ip: " << ips[i] << "\t"
-                        << "port: " << ports[j] << "\t"
-                        << "ret=ACK";
+                        << "port: " << ports[j];
                 break;
             default:
-                message << "fail! "
+                message << "f! "
                         << "ip: " << ips[i] << "\t"
                         << "port: " << ports[j];
                 break;
@@ -45,6 +43,7 @@ void tcp_syn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
             my_ui.showProcess((double)++scanned_count / (double)(ips.size() * ports.size()));
         }
     }
+    my_ui.showSuccesses();
 }
 
 void tcp_cnn_scan_success_handler(u_long ip, int port, int fd) {

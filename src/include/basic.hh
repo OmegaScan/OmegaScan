@@ -1,7 +1,7 @@
 #ifndef BASIC_CONFIG
 #define BASIC_CONFIG
 
-#define debug_switch 1
+#define debug_switch 0
 #define debug(statement) if(debug_switch) statement;
 
 #define LOCAL_PORT 30000
