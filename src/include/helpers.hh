@@ -34,8 +34,25 @@ void print_hdr_msg(char* buffer);
 
 unsigned int get_flag_of(char* buf, size_t size);
 
-// template<typename T>
-// std::vector<std::vector<T>>& vector_slice(std::vector<T>& vec, size_t fineness);
+template<typename T>
+std::vector<std::vector<T>>& vector_slice(std::vector<T>& vec, size_t fineness) {
+    size_t pieces = vec.size() / fineness + (vec.size() % fineness != 0);
+    auto result = new std::vector<std::vector<T>>;
+    auto vec_iter = vec.begin();
+    int offset_begin;
+    int offset_end;
 
-std::vector<std::vector<uint16_t>>& vector_slice(std::vector<uint16_t>& vec, size_t fineness);
+    for (int i = 0; i < pieces; i++) {
+        offset_begin = i * fineness;
+        offset_end = offset_begin + fineness;
+        offset_end = offset_end < vec.size() ? offset_end : vec.size();
+        std::vector<T> temp;
+        temp.insert(temp.begin(), vec_iter + offset_begin, vec_iter + offset_end);
+        result->push_back(temp);
+    }
+
+    return *result;
+}
+
+// std::vector<std::vector<uint16_t>>& vector_slice(std::vector<uint16_t>& vec, size_t fineness);
 #endif

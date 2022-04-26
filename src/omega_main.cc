@@ -4,7 +4,6 @@
 #include "ftxui.hh"
 
 void omega_main(std::string raw_target_host, std::string raw_port_specified, unsigned int raw_options) {
-    ftxui_init();
 
     std::cout << std::endl;
     std::cout << "omega_main:" << std::endl;

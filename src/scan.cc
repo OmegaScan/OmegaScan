@@ -1,24 +1,25 @@
 #include "scan.h"
-#include "tcp_ack.hh"
-#include "tcp_scanner.h"
-#include "tcp_syn.hh"
-#include "udp_scanner.hh"
-#include "pinger.h"
-#include "ui.hh"
-#include "basic.hh"
-#include "helpers.hh"
-#include <sstream>
 
+std::random_device rd;
+std::mt19937 mt(rd());
+std::uniform_int_distribution<int> dist(-1000, 1000);
+auto rnd = std::bind(dist, mt);
 ui my_ui; // 本来不想用全局变量的，但是由于C的回调函数...
 
 void tcp_syn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
+
+    ThreadPool pool(THREAD_NUMBER);
+    pool.init();
 
     int scanned_count = 0;
 
     for (int i = 0; i < ips.size(); i++) {
         for (int j = 0; j < ports.size(); j++) {
+
             my_ui.showScanning(ips[i], ports[j]);
-            int ret = tcp_syn(ips[i], ports[j]);
+            // int ret = tcp_syn(ips[i], ports[j]);
+            auto future = pool.submit(tcp_syn, ips[i], ports[j], LOCAL_PORT);
+            int ret = future.get();
 
             // 生成扫描结果字符串
             std::stringstream message;
@@ -46,6 +47,9 @@ void tcp_syn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
             my_ui.showProcess((double)++scanned_count / (double)(ips.size() * ports.size()));
         }
     }
+    auto finish_status = pool.submit(finish_scan);
+    finish_status.get();
+    pool.shutdown();
 }
 
 void tcp_cnn_scan_success_handler(uint32_t ip, uint16_t port, int fd) {
@@ -90,12 +94,21 @@ void tcp_cnn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
 
 void tcp_ack_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
 
+    ThreadPool pool(THREAD_NUMBER);
+
+    pool.init();
+
     int scanned_count = 0;
 
     for (int i = 0; i < ips.size(); i++) {
         for (int j = 0; j < ports.size(); j++) {
+
             my_ui.showScanning(ips[i], ports[j]);
-            int ret = tcp_syn(ips[i], ports[j]);
+
+            auto future = pool.submit(tcp_syn, ips[i], ports[j], LOCAL_PORT);
+            int ret = future.get();
+
+            // int ret = tcp_syn(ips[i], ports[j]);
             std::stringstream message;
             if (ret >= 0) {
                 message << "success! "
@@ -110,6 +123,9 @@ void tcp_ack_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
             my_ui.showProcess((double)++scanned_count / (double)(ips.size() * ports.size()));
         }
     }
+    auto finish_status = pool.submit(finish_scan);
+    finish_status.get();
+    pool.shutdown();
 }
 
 void udp_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
@@ -162,4 +178,12 @@ void ping_sweep(std::vector<std::string> ips) {
         my_ui.showMessage(message.str());
         my_ui.showProcess((double)(i + 1) / (double)ips.size());
     }
+}
+
+void simulate_hard_computation() {
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000 + rnd()));
+}
+
+void finish_scan() {
+    return;
 }

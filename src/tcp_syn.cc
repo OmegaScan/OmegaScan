@@ -63,7 +63,7 @@ int tcp_syn(std::string host, unsigned short port, unsigned short local_port) {
 
     /* Begin to receive package */
     // Set receive timeout
-    struct timeval timeout = { 5, 0 };
+    struct timeval timeout = { 1, 0 };
     if (setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(struct timeval)) < 0) {
         perror_exit("[#] Unable to set SO_RCVTIMEO socket option\n");
     }

@@ -59,7 +59,7 @@ void set_ip_hdr(struct iphdr* ip_header, std::string target_addr) {
 
     ip_header->tos = 0x0;         /* Type of service */
     ip_header->tot_len = sizeof(struct iphdr) + sizeof(struct tcphdr);    /* No payload */
-    ip_header->id= htons(CUSTOM_IP_ID);
+    ip_header->id = htons(CUSTOM_IP_ID);
 
     ip_header->frag_off = 0;
     ip_header->ttl = CUSTOM_IP_TTL;      /* Time to live */
@@ -168,27 +168,4 @@ unsigned int get_flag_of(char* buffer, size_t size) {
     struct iphdr *ip_ptr = (struct iphdr*)buffer;
     struct tcphdr* tcp_ptr = (struct tcphdr*)(buffer + 4 * (ip_ptr->ihl));
     return tcp_ptr->th_flags;
-}
-
-
-// template<typename T>
-// std::vector<std::vector<T>>& vector_slice(std::vector<T>& vec, size_t fineness) {
-std::vector<std::vector<uint16_t>>& vector_slice(std::vector<uint16_t>& vec, size_t fineness) {
-    size_t pieces = vec.size() / fineness + (vec.size() % fineness != 0);
-    // std::vector<std::vector<uint16_t>> result;
-    auto result = new std::vector<std::vector<uint16_t>>;
-    auto vec_iter = vec.begin();
-    int offset_begin;
-    int offset_end;
-
-    for (int i = 0; i < pieces; i++) {
-        offset_begin = i * fineness;
-        offset_end = offset_begin + fineness;
-        offset_end = offset_end < vec.size() ? offset_end : vec.size();
-        std::vector<uint16_t> temp;
-        temp.insert(temp.begin(), vec_iter + offset_begin, vec_iter + offset_end);
-        result->push_back(temp);
-    }
-
-    return *result;
 }

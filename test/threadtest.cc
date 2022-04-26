@@ -1,48 +1,50 @@
 #include <iostream>
-#include <pthread.h>
-#include <utility>
+#include <random>
 #include <vector>
 #include "tcp_syn.hh"
+#include "threader.hh"
+#define THREAD_NUMBER 5
 
-#define NUM_THREADS 500
 
-struct thread_data {
-    int thread_id;
-    std::string host;
-    unsigned short port;
-};
+std::random_device rd;
 
-void* thread(void* threadarg)
-{
-    struct thread_data* my_data;
-    my_data = (struct thread_data*)threadarg;
-    int status = tcp_syn(my_data->host, my_data->port);
-    std::cout << "port: " << my_data->port << "\tstatus:" << status << std::endl;
-    pthread_exit(NULL);
+std::mt19937 mt(rd());
+
+std::uniform_int_distribution<int> dist(-1000, 1000);
+
+auto rnd = std::bind(dist, mt);
+
+// 设置线程睡眠时间
+void simulate_hard_computation() {
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000 + rnd()));
 }
 
-int main()
-{
-    pthread_t threads[NUM_THREADS];
-    struct thread_data td[NUM_THREADS];
+void print_status(const unsigned short u) {
+    int status = tcp_syn("39.104.55.143", u);
+    simulate_hard_computation();
+    // std::cout << "port:" << u << "  status:" << status << std::endl;
+    printf("port:%u, status:%d\n", u, status);
+}
+void finished() {
+    return;
+}
 
-    std::vector<std::pair<std::string, unsigned short>> data = { { "39.104.55.143", 21 }, { "39.104.55.143", 22 }, { "39.104.55.143", 80 }, { "39.104.55.143", 443 }, { "39.104.55.143", 8888 }, { "39.104.55.143", 1234 } };
-    for (int i = 1235; i < 2000; ++i) {
-        data.push_back(std::make_pair("39.104.55.143", (unsigned short)i));
-    }
+void example() {
 
-    for (int i = 0; i < NUM_THREADS; ++i) {
-        // std::cout << "main() : creating thread, " << i << std::endl;
-        td[i].thread_id = i;
-        td[i].host = data[i].first;
-        td[i].port = data[i].second;
-        int status = pthread_create(&threads[i], NULL, thread, (void*)&td[i]);
-        if (status) {
-            std::cout << "Error:unable to create thread," << status << std::endl;
-            exit(-1);
-        }
+    ThreadPool pool(5);
+
+    pool.init();
+
+    for (unsigned short port = 10; port < 30; ++port) {
+        pool.submit(print_status, port);
     }
-    pthread_exit(NULL);
+    auto f = pool.submit(finished);
+    f.get();
+
+    pool.shutdown();
+}
+
+int main() {
+    example();
     return 0;
 }
-
