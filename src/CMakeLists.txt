@@ -1,4 +1,4 @@
-add_library(omegalib STATIC omega_main.cc tcp_syn.cc helpers.cc pinger.cc tcp_scanner.cc udp_scanner.cc parser.cc scan.cc ui.cc)
+add_library(omegalib STATIC omega_main.cc tcp_syn.cc helpers.cc pinger.cc tcp_ack.cc tcp_scanner.cc udp_scanner.cc parser.cc scan.cc ui.cc)
 
 set(ftxui_DIR ${VCPKG_ROOT}/installed/x64-linux/share/ftxui)
 add_library(fftxui STATIC ftxui.cc)

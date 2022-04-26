@@ -10,7 +10,7 @@
 #define CUSTOM_IP_ID 0x1000
 #define CUSTOM_IP_TTL 64
 #define MAX_PACKET_LENTH 8192
-#define RETRY_TIMES 5
+#define RETRY_TIMES 3
 
 enum scan_type {
     UDP_SCAN = 1,

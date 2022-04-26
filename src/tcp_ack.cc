@@ -9,9 +9,8 @@
 #include "helpers.hh"
 #include "basic.hh"
 
-static unsigned short local_port = LOCAL_PORT;
 
-int tcp_ack(std::string host, unsigned short port) {
+int tcp_ack(std::string host, unsigned short port, unsigned short local_port) {
     /* Set up raw socket */
     int sock_fd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
     if (sock_fd == -1)
@@ -21,7 +20,7 @@ int tcp_ack(std::string host, unsigned short port) {
     struct tcphdr tcp_header;
     struct iphdr ip_header;
     set_ip_hdr(&ip_header, host);
-    set_tcp_hdr(&tcp_header, port, local_port++, TH_ACK);
+    set_tcp_hdr(&tcp_header, port, local_port, TH_ACK);
 
     /* Set up the destination address struct */
     struct sockaddr_in target_addr;
@@ -89,5 +88,5 @@ int tcp_ack(std::string host, unsigned short port) {
     debug(print_hdr_msg(recv_buf))
 
     int rst = (get_flag_of(recv_buf, sizeof(iphdr) + sizeof(tcphdr)) >> 2) % 2;
-    return rst;
+    return rst == 1;
 }
