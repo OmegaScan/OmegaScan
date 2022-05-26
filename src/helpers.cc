@@ -1,5 +1,6 @@
 #include <arpa/inet.h>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <ifaddrs.h>
 #include <iostream>
@@ -36,7 +37,8 @@ std::string get_local_ip() {
     void* tmp_addr_ptrt = NULL;
     char addressBuffer[INET_ADDRSTRLEN];
 
-    getifaddrs(&ifap);
+    if (getifaddrs(&ifap) < 0) return "";
+    auto ifap_copy = ifap;
 
     while (ifap != NULL) {
         if (ifap->ifa_addr->sa_family == AF_INET) { // check it is IP4
@@ -45,11 +47,13 @@ std::string get_local_ip() {
             char address_buffer[INET_ADDRSTRLEN];
             inet_ntop(AF_INET, tmp_addr_ptrt, address_buffer, INET_ADDRSTRLEN);
             if (strcmp(address_buffer, "127.0.0.1") != 0) {
+                freeifaddrs(ifap_copy);
                 return std::string(address_buffer);
             }
         }
         ifap = ifap->ifa_next;
     }
+    freeifaddrs(ifap_copy);
     return "";
 }
 
@@ -135,7 +139,9 @@ uint16_t tcp_checksum(struct iphdr *ip_header, struct tcphdr *tcp_header) {
     memcpy(pseudogram, (char*)&psh, sizeof(struct psdhdr));
     memcpy(pseudogram + sizeof(struct psdhdr), tcp_header, sizeof(struct tcphdr));
 
-    return htons(checksum(pseudogram, pseudogram_size));
+    auto res = htons(checksum(pseudogram, pseudogram_size));
+    free(pseudogram);
+    return res;
 }
 
 void print_hdr_msg(char* buffer) {
