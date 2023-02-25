@@ -1,21 +1,21 @@
-#include <iostream>
-#include <vector>
-#include <string>
 #include <unistd.h>
+
+#include <iostream>
 #include <sstream>
+#include <string>
+#include <vector>
 
 class ui {
-private:
+ private:
+ public:
+  void update();
+  std::string fill(std::string strm, int n);
+  void show_scanning(std::string ip, uint16_t port);
+  void show_scanning(std::string ip, std::vector<uint16_t> port);
+  void show_message(std::string message);
+  void show_process(double process);
+  void show_successes();
 
-public:
-    void update();
-    std::string fill(std::string strm, int n);
-    void showScanning(std::string ip, uint16_t port);
-    void showScanning(std::string ip, std::vector<uint16_t> port);
-    void showMessage(std::string message);
-    void showProcess(double process);
-    void showSuccesses();
-
-    ui();
-    ~ui();
+  ui();
+  ~ui();
 };

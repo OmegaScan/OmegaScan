@@ -1,9 +1,10 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <sstream>
-#include <sys/socket.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
+
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #define LAST_HOST "255.255.255.255"
 #define LAST_PORT "65535"

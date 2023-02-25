@@ -1,11 +1,12 @@
 #ifndef TCP_SYN
 #define TCP_SYN
 
-#include <iostream>
+#include <arpa/inet.h>
 #include <strings.h>
 #include <sys/socket.h>
+
+#include <iostream>
 #include <string>
-#include <arpa/inet.h>
 
 #include "basic.hh"
 
@@ -20,7 +21,8 @@
  *      return > 0: Succeed Scan, more details can be found at basic.hh ->
  *                  syn_res
  **/
-int tcp_syn(std::string host, unsigned short port, unsigned short local_port = LOCAL_PORT);
+int tcp_syn(std::string host, unsigned short port,
+            unsigned short local_port = LOCAL_PORT);
 // int tcp_syn(std::string host, unsigned short port);
 
 #endif
