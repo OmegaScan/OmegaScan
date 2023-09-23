@@ -7,21 +7,24 @@
 #include "omega_main.hh"
 
 #define VERSION "0.00"
+
+using namespace std;
+
 void print_version() {
-  std::cout << "Welcome to OmegaScan! VERSION: " << VERSION << std::endl;
+  cout << "Welcome to OmegaScan! VERSION: " << VERSION << endl;
 }
 
 void print_usage() {
-  std::cout << "Usage: omegascan [Scan Type(s)] [Target]" << std::endl;
-  std::cout << "SCAN TECHNIQUES:" << std::endl;
-  std::cout << "--sS/sT/sA: TCP SYN/Connect()/ACK" << std::endl;
-  std::cout << "--sU: UDP Scan" << std::endl;
-  std::cout << "--sP: Ping sweep" << std::endl;
+  cout << "Usage: omegascan [Scan Type(s)] [Target]" << endl;
+  cout << "SCAN TECHNIQUES:" << endl;
+  cout << "--sS/sT/sA: TCP SYN/Connect()/ACK" << endl;
+  cout << "--sU: UDP Scan" << endl;
+  cout << "--sP: Ping sweep" << endl;
 }
 
 int main(int argc, char *argv[]) {
-  std::string raw_target_host;
-  std::string raw_port_specified;
+  string raw_target_host;
+  string raw_port_specified;
   unsigned int raw_options = 0;
 
   if (argc == 1) {

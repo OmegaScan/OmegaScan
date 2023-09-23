@@ -5,16 +5,18 @@
 #include "parser.hh"
 #include "scan.hh"
 
-void omega_main(std::string raw_target_host, std::string raw_port_specified,
-                unsigned int raw_options) {
-  debug(std::cout << std::endl) debug(std::cout << "omega_main:" << std::endl);
-  debug(std::cout << "\ttarget_host: " << raw_target_host << std::endl);
-  debug(std::cout << "\tport_specified: " << raw_port_specified << std::endl);
-  debug(std::cout << "\toptions: " << raw_options << std::endl);
-  debug(std::cout << std::endl);
+using namespace std;
 
-  std::vector<std::string> ips = parse_host(raw_target_host);
-  std::vector<uint16_t> ports = parse_port(raw_port_specified);
+void omega_main(string raw_target, string raw_port, unsigned int raw_options) {
+  debug(cout << endl);
+  debug(cout << "omega_main:" << endl);
+  debug(cout << "\ttarget_host: " << raw_host << endl);
+  debug(cout << "\tport_specified: " << raw_port << endl);
+  debug(cout << "\toptions: " << raw_options << endl);
+  debug(cout << endl);
+
+  vector<string> ips = parse_host(raw_target);
+  vector<uint16_t> ports = parse_port(raw_port);
 
   switch (raw_options) {
     case scan_type::UDP_SCAN:
@@ -33,7 +35,7 @@ void omega_main(std::string raw_target_host, std::string raw_port_specified,
       ping_sweep(ips);
       break;
     default:
-      std::cerr << "scan type error, type --help for usage." << std::endl;
+      cerr << "scan type error, type --help for usage." << endl;
       break;
   }
 

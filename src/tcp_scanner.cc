@@ -1,5 +1,7 @@
 #include "tcp_scanner.hh"
 
+using namespace std;
+
 tcp_scanner::tcp_scanner() { timeout = {1, 0}; }
 
 tcp_scanner::~tcp_scanner() {}
@@ -63,8 +65,8 @@ int tcp_scanner::wait_connection_success() {
   return select(maxfd + 1, (fd_set *)NULL, &fdset, (fd_set *)NULL, &timeout);
 }
 
-std::vector<int> tcp_scanner::get_success_socks_idx() {
-  std::vector<int> result;
+vector<int> tcp_scanner::get_success_socks_idx() {
+  vector<int> result;
 
   for (int i = 0; i < sockfds.size(); i++) {
     if (sockfds[i] == -1) {
@@ -90,7 +92,7 @@ std::vector<int> tcp_scanner::get_success_socks_idx() {
   return result;
 }
 
-void tcp_scanner::scan(uint32_t addr, const std::vector<uint16_t> &ports) {
+void tcp_scanner::scan(uint32_t addr, const vector<uint16_t> &ports) {
   this->addr = addr;
   this->ports = ports;
 

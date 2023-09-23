@@ -11,9 +11,10 @@
 #include "basic.hh"
 #include "helpers.hh"
 
+using namespace std;
 // static unsigned short local_port = LOCAL_PORT;
 
-int tcp_syn(std::string host, unsigned short port, unsigned short local_port) {
+int tcp_syn(string host, unsigned short port, unsigned short local_port) {
   /* Set up raw socket */
   int sock_fd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
   if (sock_fd == -1) return error_type::SOCKET_CREATE_ERROR;
@@ -95,14 +96,14 @@ int tcp_syn(std::string host, unsigned short port, unsigned short local_port) {
 
   unsigned int flags = get_flag_of(recv_buf, sizeof(iphdr) + sizeof(tcphdr));
   if ((flags >> 2) % 2 == 1) {
-    debug(std::cout << "RST flag is on!" << std::endl);
+    debug(cout << "RST flag is on!" << endl);
     return syn_res::RST;
   } else if ((flags >> 4) % 2 == 1) {
-    debug(std::cout << "ACK flag is on!" << std::endl);
+    debug(cout << "ACK flag is on!" << endl);
     return syn_res::ACK;
   } else {
-    debug(std::cout << "Unkown flags" << std::endl);
-    debug(std::cout << "Flags: " << flags << std::endl);
+    debug(cout << "Unkown flags" << endl);
+    debug(cout << "Flags: " << flags << endl);
     return error_type::UNKNOWN_RESULT;
   }
 

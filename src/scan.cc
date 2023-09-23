@@ -1,21 +1,23 @@
 #include "scan.hh"
 
-std::random_device rd;
-std::mt19937 mt(rd());
-std::uniform_int_distribution<int> dist(-1000, 1000);
-auto rnd = std::bind(dist, mt);
+using namespace std;
+
+random_device rd;
+mt19937 mt(rd());
+uniform_int_distribution<int> dist(-1000, 1000);
+auto rnd = bind(dist, mt);
 ui my_ui;  // 本来不想用全局变量的，但是由于C的回调函数...
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 long countP = 0;
 
-void print_tcp_syn(std::string host, unsigned short port, int total) {
+void print_tcp_syn(string host, unsigned short port, int total) {
   int ret = tcp_syn(host, port, LOCAL_PORT);
 
   pthread_mutex_lock(&mutex);
   my_ui.show_scanning(host, port);
 
   // 生成扫描结果字符串
-  std::stringstream message;
+  stringstream message;
   switch (ret) {
     case syn_res::RST:
       message << "ip: " << host << ", "
@@ -38,7 +40,7 @@ void print_tcp_syn(std::string host, unsigned short port, int total) {
   pthread_mutex_unlock(&mutex);
 }
 
-void tcp_syn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
+void tcp_syn_scan(vector<string> ips, vector<uint16_t> ports) {
   ThreadPool pool(THREAD_NUMBER);
   pool.init();
 
@@ -64,13 +66,13 @@ void tcp_cnn_scan_success_handler(uint32_t ip, uint16_t port, int fd) {
   int p3 = (u_char)((ip >> 8) & 0xFF);
   int p4 = (u_char)(ip & 0xFF);
 
-  std::stringstream message;
+  stringstream message;
   message << "ip: " << p1 << "." << p2 << "." << p3 << "." << p4 << ", "
           << "port: " << port << " -> open";
   my_ui.show_message(message.str());
 }
 
-void tcp_cnn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
+void tcp_cnn_scan(vector<string> ips, vector<uint16_t> ports) {
   tcp_scanner scanner;
   scanner.set_timeout({1, 0});
   scanner.set_success_callback(tcp_cnn_scan_success_handler);
@@ -97,12 +99,12 @@ void tcp_cnn_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
   my_ui.show_successes();
 }
 
-void print_tcp_ack(std::string host, unsigned short port, int total) {
+void print_tcp_ack(string host, unsigned short port, int total) {
   int ret = tcp_syn(host, port, LOCAL_PORT);
 
   pthread_mutex_lock(&mutex);
   my_ui.show_scanning(host, port);
-  std::stringstream message;
+  stringstream message;
   if (ret > 0) {
     message << "ip: " << host << ", "
             << "port: " << port << " -> unfiltered";
@@ -117,7 +119,7 @@ void print_tcp_ack(std::string host, unsigned short port, int total) {
   pthread_mutex_unlock(&mutex);
 }
 
-void tcp_ack_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
+void tcp_ack_scan(vector<string> ips, vector<uint16_t> ports) {
   ThreadPool pool(THREAD_NUMBER);
 
   pool.init();
@@ -137,7 +139,7 @@ void tcp_ack_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
   my_ui.show_successes();
 }
 
-void udp_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
+void udp_scan(vector<string> ips, vector<uint16_t> ports) {
   int scanned_count = 0;
 
   for (int i = 0; i < ips.size(); i++) {
@@ -145,7 +147,7 @@ void udp_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
       my_ui.show_scanning(ips[i], ports[j]);
       int ret = udp_scanner(ips[i], ports[j]);
 
-      std::stringstream message;
+      stringstream message;
       switch (ret) {
         case -1:
           message << "ip: " << ips[i] << ", "
@@ -168,11 +170,11 @@ void udp_scan(std::vector<std::string> ips, std::vector<uint16_t> ports) {
   my_ui.show_successes();
 }
 
-void ping_sweep(std::vector<std::string> ips) {
+void ping_sweep(vector<string> ips) {
   for (int i = 0; i < ips.size(); i++) {
     my_ui.show_scanning(ips[i], 0);
     pinger p(ips[i].c_str());
-    std::stringstream message;
+    stringstream message;
     if (p.ping_for_success(0.3, 1) == 0) {
       message << "ping success! "
               << "ip: " << p.get_addr() << ", "
@@ -190,7 +192,7 @@ void ping_sweep(std::vector<std::string> ips) {
 }
 
 void simulate_hard_computation() {
-  std::this_thread::sleep_for(std::chrono::milliseconds(2000 + rnd()));
+  this_thread::sleep_for(chrono::milliseconds(2000 + rnd()));
 }
 
 void finish_scan() { return; }

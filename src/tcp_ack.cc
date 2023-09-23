@@ -11,7 +11,9 @@
 #include "basic.hh"
 #include "helpers.hh"
 
-int tcp_ack(std::string host, unsigned short port, unsigned short local_port) {
+using namespace std;
+
+int tcp_ack(string host, unsigned short port, unsigned short local_port) {
   /* Set up raw socket */
   int sock_fd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
   if (sock_fd == -1) return error_type::SOCKET_CREATE_ERROR;

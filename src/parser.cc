@@ -1,23 +1,25 @@
 #include "parser.hh"
 
-std::vector<std::string> parse_host(const std::string &raw_target_host) {
-  std::vector<std::string> host_list = {};
-  std::string str_start_host = raw_target_host, str_end_host = "-1";
+using namespace std;
+
+vector<string> parse_host(const string &raw_host) {
+  vector<string> host_list = {};
+  string str_start_host = raw_host, str_end_host = "-1";
   uint32_t start_host, end_host;
 
-  u_int8_t index = 0, input_len = raw_target_host.size();
-  while (index < input_len && delimiter != raw_target_host[index++])
+  u_int8_t index = 0, input_len = raw_host.size();
+  while (index < input_len && delimiter != raw_host[index++])
     ;
   if (index < 7)
     return {};
   else if (index == input_len) {
-    if (delimiter == raw_target_host[index - 1]) {
-      str_start_host = raw_target_host.substr(0, index - 1);
+    if (delimiter == raw_host[index - 1]) {
+      str_start_host = raw_host.substr(0, index - 1);
       str_end_host = LAST_HOST;
     }
   } else {
-    str_start_host = raw_target_host.substr(0, index - 1);
-    str_end_host = raw_target_host.substr(index, input_len - index);
+    str_start_host = raw_host.substr(0, index - 1);
+    str_end_host = raw_host.substr(index, input_len - index);
   }
   start_host = ntohl(inet_addr((char *)str_start_host.data()));
   end_host = ntohl(inet_addr((char *)str_end_host.data()));
@@ -37,7 +39,7 @@ std::vector<std::string> parse_host(const std::string &raw_target_host) {
       for (uint32_t u_item = start_host + 1; u_item <= end_host && u_item != 0;
            ++u_item) {
         struct in_addr address = {htonl(u_item)};
-        std::string str_item = inet_ntoa(address);
+        string str_item = inet_ntoa(address);
         host_list.push_back(str_item);
       }
     }
@@ -45,28 +47,28 @@ std::vector<std::string> parse_host(const std::string &raw_target_host) {
   return host_list;
 }
 
-std::vector<unsigned short> parse_port(const std::string &raw_port_specified) {
-  std::vector<u_int16_t> port_list = {};
-  std::string str_start_port = raw_port_specified, str_end_port = "-1";
+vector<unsigned short> parse_port(const string &raw_port) {
+  vector<u_int16_t> port_list = {};
+  string str_start_port = raw_port, str_end_port = "-1";
   u_int16_t start_port, end_port;
-  u_int8_t index = 0, input_len = raw_port_specified.size();
-  while (index < input_len && delimiter != raw_port_specified[index++])
+  u_int8_t index = 0, input_len = raw_port.size();
+  while (index < input_len && delimiter != raw_port[index++])
     ;
   if (index == input_len) {
-    if (delimiter == raw_port_specified[index - 1]) {
-      str_start_port = raw_port_specified.substr(0, index - 1);
+    if (delimiter == raw_port[index - 1]) {
+      str_start_port = raw_port.substr(0, index - 1);
       str_end_port = LAST_PORT;
     }
   } else {
-    str_start_port = raw_port_specified.substr(0, index - 1);
-    str_end_port = raw_port_specified.substr(index, input_len - index);
+    str_start_port = raw_port.substr(0, index - 1);
+    str_end_port = raw_port.substr(index, input_len - index);
   }
-  start_port = std::stoi(str_start_port);
-  end_port = std::stoi(str_end_port);
+  start_port = stoi(str_start_port);
+  end_port = stoi(str_end_port);
 
-  if (start_port == std::stoi(LAST_PORT) && str_start_port != LAST_PORT)
+  if (start_port == stoi(LAST_PORT) && str_start_port != LAST_PORT)
     return {};
-  else if (end_port == std::stoi(LAST_PORT) && str_end_port != LAST_PORT) {
+  else if (end_port == stoi(LAST_PORT) && str_end_port != LAST_PORT) {
     if (str_end_port == "-1")
       port_list.push_back(start_port);
     else

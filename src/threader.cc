@@ -1,18 +1,20 @@
 #include "threader.hh"
 
+using namespace std;
+
 ThreadPool::ThreadWorker::ThreadWorker(ThreadPool *pool, const int id)
     : m_pool(pool), m_id(id) {}
 
 // 重载()操作
 void ThreadPool::ThreadWorker::operator()() {
-  std::function<void()> func;  // 定义基础函数类func
+  function<void()> func;  // 定义基础函数类func
 
   bool dequeued;  // 是否正在取出队列中元素
 
   while (!m_pool->m_shutdown) {
     {
       // 为线程环境加锁，互访问工作线程的休眠和唤醒
-      std::unique_lock<std::mutex> lock(m_pool->m_conditional_mutex);
+      unique_lock<mutex> lock(m_pool->m_conditional_mutex);
 
       // 如果任务队列为空，阻塞当前线程
       if (m_pool->m_queue.empty()) {
@@ -30,12 +32,12 @@ void ThreadPool::ThreadWorker::operator()() {
 
 // 线程池构造函数
 ThreadPool::ThreadPool(const int n_threads)
-    : m_threads(std::vector<std::thread>(n_threads)), m_shutdown(false) {}
+    : m_threads(vector<thread>(n_threads)), m_shutdown(false) {}
 
 // Inits thread pool
 void ThreadPool::init() {
   for (int i = 0; i < m_threads.size(); ++i) {
-    m_threads.at(i) = std::thread(ThreadWorker(this, i));  // 分配工作线程
+    m_threads.at(i) = thread(ThreadWorker(this, i));  // 分配工作线程
   }
 }
 

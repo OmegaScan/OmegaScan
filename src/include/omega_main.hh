@@ -7,7 +7,7 @@
 #include "basic.hh"
 #include "tcp_syn.hh"
 
-void omega_main(std::string raw_target_host, std::string raw_port_specified,
+void omega_main(std::string raw_host, std::string raw_port,
                 unsigned int raw_options);
 
 #endif

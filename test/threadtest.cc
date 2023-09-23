@@ -5,24 +5,25 @@
 #include "tcp_syn.hh"
 #include "threader.hh"
 #define THREAD_NUMBER 5
+using namespace std;
 
-std::random_device rd;
+random_device rd;
 
-std::mt19937 mt(rd());
+mt19937 mt(rd());
 
-std::uniform_int_distribution<int> dist(-1000, 1000);
+uniform_int_distribution<int> dist(-1000, 1000);
 
-auto rnd = std::bind(dist, mt);
+auto rnd = bind(dist, mt);
 
 // 设置线程睡眠时间
 void simulate_hard_computation() {
-  std::this_thread::sleep_for(std::chrono::milliseconds(2000 + rnd()));
+  this_thread::sleep_for(chrono::milliseconds(2000 + rnd()));
 }
 
 void print_status(const unsigned short u) {
   int status = tcp_syn("39.104.55.143", u);
   simulate_hard_computation();
-  // std::cout << "port:" << u << "  status:" << status << std::endl;
+  // cout << "port:" << u << "  status:" << status << endl;
   printf("port:%u, status:%d\n", u, status);
 }
 void finished() { return; }

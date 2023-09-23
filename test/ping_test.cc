@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "pinger.hh"
+using namespace std;
 
 using namespace std;
 

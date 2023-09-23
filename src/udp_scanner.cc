@@ -1,6 +1,8 @@
 #include "udp_scanner.hh"
 
-int udp_scanner(std::string host, unsigned short port) {
+using namespace std;
+
+int udp_scanner(string host, unsigned short port) {
   char buffer[20];
   char *ch_host = (char *)host.data();
   struct sockaddr_in addr_target, addr_source;
