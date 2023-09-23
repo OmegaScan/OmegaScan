@@ -2,10 +2,11 @@
 #include <vector>
 
 #include "helpers.hh"
+using namespace std;
 
 int main(int argc, char *argv[]) {
-  std::vector<uint16_t> vec;
-  std::vector<std::vector<uint16_t>> vecc;
+  vector<uint16_t> vec;
+  vector<vector<uint16_t>> vecc;
   for (int i = 0; i < 234; i++) {
     vec.push_back(i);
   }

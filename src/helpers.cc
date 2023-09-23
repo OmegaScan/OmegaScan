@@ -16,14 +16,14 @@
 #include <vector>
 
 #include "basic.hh"
+using namespace std;
 
 void perror_exit(const char *s) {
-  std::cerr << std::string(s) << ": " << strerror(errno) << std::endl;
+  cerr << string(s) << ": " << strerror(errno) << endl;
   exit(EXIT_FAILURE);
 }
 
-int get_sockaddr(std::string host, unsigned short port,
-                 struct sockaddr_in *addr_p) {
+int get_sockaddr(string host, unsigned short port, struct sockaddr_in *addr_p) {
   if (port < 1 || port > 65535) return error_type::PORT_OUT_OF_RANGE;
   bzero(addr_p, sizeof(sockaddr_in));
   addr_p->sin_family = AF_INET;
@@ -34,7 +34,7 @@ int get_sockaddr(std::string host, unsigned short port,
   return 0;
 }
 
-std::string get_local_ip() {
+string get_local_ip() {
   struct ifaddrs *ifap = NULL;
   void *tmp_addr_ptrt = NULL;
   char addressBuffer[INET_ADDRSTRLEN];
@@ -50,7 +50,7 @@ std::string get_local_ip() {
       inet_ntop(AF_INET, tmp_addr_ptrt, address_buffer, INET_ADDRSTRLEN);
       if (strcmp(address_buffer, "127.0.0.1") != 0) {
         freeifaddrs(ifap_copy);
-        return std::string(address_buffer);
+        return string(address_buffer);
       }
     }
     ifap = ifap->ifa_next;
@@ -59,7 +59,7 @@ std::string get_local_ip() {
   return "";
 }
 
-void set_ip_hdr(struct iphdr *ip_header, std::string target_addr) {
+void set_ip_hdr(struct iphdr *ip_header, string target_addr) {
   ip_header->version = 4; /* IPv4 */
   ip_header->ihl = 5;     /* (5 * 4) = 20 bytes; no options */
 
@@ -153,9 +153,9 @@ void print_hdr_msg(char *buffer) {
   struct iphdr *recv_iph = (struct iphdr *)buffer;
   struct tcphdr *recv_tcph = (struct tcphdr *)(buffer + 4 * (recv_iph->ihl));
 
-  std::cout << "recv source port: " << ntohs(recv_tcph->th_sport) << std::endl;
-  std::cout << "recv dest port: " << ntohs(recv_tcph->th_dport) << std::endl;
-  std::cout << "flags: " << (unsigned int)(recv_tcph->th_flags) << std::endl;
+  cout << "recv source port: " << ntohs(recv_tcph->th_sport) << endl;
+  cout << "recv dest port: " << ntohs(recv_tcph->th_dport) << endl;
+  cout << "flags: " << (unsigned int)(recv_tcph->th_flags) << endl;
 
   char ipName[20];
   unsigned long k = ntohl(recv_iph->saddr);
@@ -164,7 +164,7 @@ void print_hdr_msg(char *buffer) {
   unsigned char p3 = (u_char)((k >> 8) & 0xFF);
   unsigned char p4 = (u_char)(k & 0xFF);
   sprintf(ipName, "%d.%d.%d.%d", p1, p2, p3, p4);
-  std::cout << "recv source ip: " << ipName << std::endl;
+  cout << "recv source ip: " << ipName << endl;
 
   k = ntohl(recv_iph->daddr);
   p1 = (u_char)((k >> 24) & 0xFF);
@@ -172,7 +172,7 @@ void print_hdr_msg(char *buffer) {
   p3 = (u_char)((k >> 8) & 0xFF);
   p4 = (u_char)(k & 0xFF);
   sprintf(ipName, "%d.%d.%d.%d", p1, p2, p3, p4);
-  std::cout << "recv dest ip: " << ipName << std::endl;
+  cout << "recv dest ip: " << ipName << endl;
 }
 
 unsigned int get_flag_of(char *buffer, size_t size) {
