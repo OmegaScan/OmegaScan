@@ -7,13 +7,13 @@ mt19937 mt(rd());
 uniform_int_distribution<int> dist(-1000, 1000);
 auto rnd = bind(dist, mt);
 ui my_ui;  // 本来不想用全局变量的，但是由于C的回调函数...
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutex_lock = PTHREAD_MUTEX_INITIALIZER;
 long countP = 0;
 
 void print_tcp_syn(string host, unsigned short port, int total) {
   int ret = tcp_syn(host, port, LOCAL_PORT);
 
-  pthread_mutex_lock(&mutex);
+  pthread_mutex_lock(&mutex_lock);
   my_ui.show_scanning(host, port);
 
   // 生成扫描结果字符串
@@ -37,7 +37,7 @@ void print_tcp_syn(string host, unsigned short port, int total) {
   countP++;
 
   my_ui.show_process((double)countP / (double)total);
-  pthread_mutex_unlock(&mutex);
+  pthread_mutex_unlock(&mutex_lock);
 }
 
 void tcp_syn_scan(vector<string> ips, vector<uint16_t> ports) {
@@ -102,7 +102,7 @@ void tcp_cnn_scan(vector<string> ips, vector<uint16_t> ports) {
 void print_tcp_ack(string host, unsigned short port, int total) {
   int ret = tcp_syn(host, port, LOCAL_PORT);
 
-  pthread_mutex_lock(&mutex);
+  pthread_mutex_lock(&mutex_lock);
   my_ui.show_scanning(host, port);
   stringstream message;
   if (ret > 0) {
@@ -116,7 +116,7 @@ void print_tcp_ack(string host, unsigned short port, int total) {
   countP++;
 
   my_ui.show_process((double)countP / (double)total);
-  pthread_mutex_unlock(&mutex);
+  pthread_mutex_unlock(&mutex_lock);
 }
 
 void tcp_ack_scan(vector<string> ips, vector<uint16_t> ports) {
