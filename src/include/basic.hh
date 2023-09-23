@@ -1,9 +1,11 @@
 #ifndef BASIC_CONFIG
 #define BASIC_CONFIG
 
-#define debug_switch 0
-#define debug(statement) \
-  if (debug_switch) statement;
+#ifdef debug_switch
+#define debug(statement) statement
+#else
+#define debug(statement)
+#endif
 
 #define LOCAL_PORT 30000
 #define TCP_SEQ_NUM 0x1234
